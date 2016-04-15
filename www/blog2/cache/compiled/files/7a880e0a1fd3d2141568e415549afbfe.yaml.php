@@ -2,7 +2,7 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => 'themes://pinpress/pinpress.yaml',
-    'modified' => 1456923599,
+    'modified' => 1460729295,
     'data' => [
         'enabled' => true,
         'streams' => [

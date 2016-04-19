@@ -2,6 +2,7 @@
 namespace Grav\Console;
 
 use Grav\Common\GravTrait;
+use Grav\Common\Composer;
 use Grav\Console\Cli\ClearCacheCommand;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -85,7 +86,9 @@ trait ConsoleTrait
 
     public function composerUpdate($path, $action = 'install')
     {
-        return system('php bin/composer.phar --working-dir="'.$path.'" --no-interaction --no-dev --prefer-dist -o '. $action);
+        $composer = Composer::getComposerExecutor();
+
+        return system($composer . ' --working-dir="'.$path.'" --no-interaction --no-dev --prefer-dist -o '. $action);
     }
 
     /**
@@ -103,5 +106,22 @@ trait ConsoleTrait
         $command = new ClearCacheCommand();
         $input = new ArrayInput($all);
         return $command->run($input, $this->output);
+    }
+    
+    /**
+     * Validate if the system is based on windows or not.
+     * 
+     * @return bool
+     */
+    public function isWindows()
+    {
+        $keys = [
+            'CYGWIN_NT-5.1',
+            'WIN32',
+            'WINNT',
+            'Windows'
+        ];
+
+        return array_key_exists(PHP_OS, $keys);
     }
 }

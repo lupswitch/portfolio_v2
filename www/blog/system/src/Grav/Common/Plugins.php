@@ -4,7 +4,6 @@ namespace Grav\Common;
 use Grav\Common\Config\Config;
 use Grav\Common\Data\Blueprints;
 use Grav\Common\Data\Data;
-use Grav\Common\GravTrait;
 use Grav\Common\File\CompiledYamlFile;
 use RocketTheme\Toolbox\Event\EventDispatcher;
 use RocketTheme\Toolbox\Event\EventSubscriberInterface;
@@ -13,7 +12,7 @@ use RocketTheme\Toolbox\Event\EventSubscriberInterface;
  * The Plugins object holds an array of all the plugin objects that
  * Grav knows about
  *
- * @author RocketTheme
+ * @author  RocketTheme
  * @license MIT
  */
 class Plugins extends Iterator
@@ -30,7 +29,9 @@ class Plugins extends Iterator
     {
         /** @var Config $config */
         $config = self::getGrav()['config'];
-        $plugins = (array) $config->get('plugins');
+        $plugins = (array)$config->get('plugins');
+
+        $inflector = self::getGrav()['inflector'];
 
         /** @var EventDispatcher $events */
         $events = self::getGrav()['events'];
@@ -51,8 +52,8 @@ class Plugins extends Iterator
             require_once $filePath;
 
             $pluginClassFormat = [
-                'Grav\\Plugin\\'.ucfirst($plugin).'Plugin',
-                'Grav\\Plugin\\'.Inflector::camelize($plugin).'Plugin'
+                'Grav\\Plugin\\' . ucfirst($plugin) . 'Plugin',
+                'Grav\\Plugin\\' . $inflector->camelize($plugin) . 'Plugin'
             ];
             $pluginClassName = false;
 
@@ -64,7 +65,8 @@ class Plugins extends Iterator
             }
 
             if (false === $pluginClassName) {
-                throw new \RuntimeException(sprintf("Plugin '%s' class not found! Try reinstalling this plugin.", $plugin));
+                throw new \RuntimeException(sprintf("Plugin '%s' class not found! Try reinstalling this plugin.",
+                    $plugin));
             }
 
             $instance = new $pluginClassName($plugin, self::getGrav(), $config);
@@ -76,6 +78,11 @@ class Plugins extends Iterator
         return $this->items;
     }
 
+    /**
+     * Add a plugin
+     *
+     * @param $plugin
+     */
     public function add($plugin)
     {
         if (is_object($plugin)) {
@@ -90,33 +97,53 @@ class Plugins extends Iterator
      */
     public static function all()
     {
-        $list = array();
+        $list = [];
         $locator = Grav::instance()['locator'];
-        $iterator = new \DirectoryIterator($locator->findResource('plugins://', false));
 
-        /** @var \DirectoryIterator $directory */
-        foreach ($iterator as $directory) {
-            if (!$directory->isDir() || $directory->isDot()) {
-                continue;
+        $plugins = (array)$locator->findResources('plugins://', false);
+        foreach ($plugins as $path) {
+            $iterator = new \DirectoryIterator($path);
+
+            /** @var \DirectoryIterator $directory */
+            foreach ($iterator as $directory) {
+                if (!$directory->isDir() || $directory->isDot()) {
+                    continue;
+                }
+
+                $plugin = $directory->getBasename();
+                $result = self::get($plugin);
+
+                if ($result) {
+                    $list[$plugin] = $result;
+                }
             }
-
-            $type = $directory->getBasename();
-            $list[$type] = self::get($type);
         }
-
         ksort($list);
 
         return $list;
     }
 
+    /**
+     * Get a plugin by name
+     *
+     * @param string $name
+     *
+     * @return Data|null
+     */
     public static function get($name)
     {
-        $blueprints = new Blueprints("plugins://{$name}");
-        $blueprint = $blueprints->get('blueprints');
+        $blueprints = new Blueprints('plugins://');
+        $blueprint = $blueprints->get("{$name}/blueprints");
         $blueprint->name = $name;
 
         // Load default configuration.
-        $file = CompiledYamlFile::instance("plugins://{$name}/{$name}.yaml");
+        $file = CompiledYamlFile::instance("plugins://{$name}/{$name}" . YAML_EXT);
+
+        // ensure this is a valid plugin
+        if (!$file->exists()) {
+            return null;
+        }
+
         $obj = new Data($file->content(), $blueprint);
 
         // Override with user configuration.

@@ -1,7 +1,7 @@
 enabled: true
 from:
 from_name:
-to:
+to: 'nitish_akalwadi@yahoo.co.in'
 to_name:
 mailer:
   engine: mail

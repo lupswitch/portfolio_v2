@@ -61,7 +61,7 @@ pages:
   url_taxonomy_filters: true                # Enable auto-magic URL-based taxonomy filters for page collections
 
 cache:
-  enabled: true                             # Set to true to enable caching
+  enabled: false#nitish                             # Set to true to enable caching
   check:
     method: file                            # Method to check for updates in pages: file|folder|none
   driver: auto                              # One of: auto|file|apc|xcache|memcache|wincache

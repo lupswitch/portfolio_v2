@@ -15,7 +15,7 @@ The codeigniter has an annoying URL where the controller name appears after inde
 You can rewrite a cleaner URL using apache mod_rewrite module.
 First, enable mod_rewite using command <code>a2enmod rewrite</code> and then restart apache <code>service apache2 restart</code> or <code>/etc/init.d/apache2 restart</code>
 
-The below code is self explanatory with commenst. Now you can use a clean URL like www.yoursite.com/controller to access the pages.
+Add the below code to <code>.htaccess</code> file and place it in the codeigniter's root directory. The code is self explanatory with comments. Now you can use a clean URL like www.yoursite.com/controller to access the pages.
 
 <pre><code class='apache'>
 <IfModule mod_rewrite.c>

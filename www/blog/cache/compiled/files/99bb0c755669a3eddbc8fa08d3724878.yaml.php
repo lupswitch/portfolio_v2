@@ -2,12 +2,12 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => 'plugins://email/email.yaml',
-    'modified' => 1460730306,
+    'modified' => 1461073532,
     'data' => [
         'enabled' => true,
         'from' => NULL,
         'from_name' => NULL,
-        'to' => NULL,
+        'to' => 'nitish_akalwadi@yahoo.co.in',
         'to_name' => NULL,
         'mailer' => [
             'engine' => 'mail',

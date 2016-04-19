@@ -2,7 +2,7 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => '/home/ubuntu/workspace/portfolio/www/blog/system/config/system.yaml',
-    'modified' => 1460729295,
+    'modified' => 1461073710,
     'data' => [
         'absolute_urls' => false,
         'timezone' => '',
@@ -88,7 +88,7 @@ return [
             'url_taxonomy_filters' => true
         ],
         'cache' => [
-            'enabled' => true,
+            'enabled' => 'false#nitish',
             'check' => [
                 'method' => 'file'
             ],
